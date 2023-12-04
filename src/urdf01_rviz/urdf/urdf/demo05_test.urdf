@@ -1,0 +1,142 @@
+<robot name="mycar">
+<!-- 1.添加一个尺寸极小的link -->
+<link name="base_footprint">
+  <visual>
+   <geometry>
+    <box size="0.001 0.001 0.001" />
+   </geometry>
+  </visual>
+ </link>
+ <!-- 2.添加底盘 -->
+ <!-- 形状:圆柱 
+            半径:10     cm 
+            高度:8      cm 
+            离地:1.5    cm -->
+<!-- 2.1link -->
+<link name="base_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.08" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="baselink_color">
+                <color rgba="0.8 0.3 0.1 0.5" />
+            </material>
+        </visual>
+    </link>
+<!-- 2.2joint -->
+ <joint name="link2footprint" type="fixed">
+        <parent link="base_footprint" />
+        <child link="base_link"/>
+<!-- 关节z上的设置等于车体高度/2+离地间距 -->
+<!-- link的偏移是物体中心与大地坐标系原点的偏移，joint的偏移量是两个link坐标系之间的偏移 -->
+        <origin xyz="0 0 0.055" rpy="0 0 0"/>
+    </joint>
+ <!-- 3.添加驱动轮 -->
+ <!--
+        驱动轮是侧翻的圆柱
+        参数
+            半径: 3.25 cm
+            宽度: 1.5  cm
+            颜色: 黑色
+        关节设置:
+            x = 0
+            y = 底盘的半径 
+            z = 离地间距 + 底盘长度 / 2 - 轮胎半径 = 1.5 + 4 - 3.25 = 2.25(cm)
+            axis = 0 1 0
+    -->
+<!-- 3.1link -->
+<link name="left_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.0325" length="0.015" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.5708 0 0" />
+            <material name="wheel_color">
+                <color rgba="0.8 0.3 0.1 0.5" />
+            </material>
+        </visual>
+    </link>
+<link name="right_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.0325" length="0.015" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.5708 0 0" />
+            <material name="wheel_color">
+                <color rgba="0.8 0.3 0.1 0.5" />
+            </material>
+        </visual>
+    </link>
+<!-- 3.2joint -->
+<joint name="left2link" type="continuous">
+        <parent link="base_link" />
+        <child link="left_wheel"/>
+        <!-- 这里的偏移是父子级之间的位置关系，不是参考的大地，参考父级坐标，判断大小和正负 -->
+        <origin xyz="0 0.1 -0.0225" rpy="0 0 0"/>
+        <!-- 参考Axes,所以是绕y轴旋转 -->
+        <axis xyz="0 1 0" />
+    </joint>
+<joint name="right2link" type="continuous">
+        <parent link="base_link" />
+        <child link="right_wheel"/>
+        <!-- 反方向要取负值 -->
+        <origin xyz="0 -0.1 -0.0225" rpy="0 0 0"/>
+        <!-- 参考Axes,所以是绕y轴旋转 -->
+        <axis xyz="0 1 0" />
+    </joint>
+ <!-- 4.添加万向轮 -->
+<!--
+        参数
+            形状: 球体
+            半径: 0.75 cm
+            颜色: 黑色
+
+        关节设置:
+            x = 自定义(底盘半径 - 万向轮半径) = 0.1 - 0.0075 = 0.0925(cm)
+            y = 0
+            z = 底盘长度 / 2 + 离地间距 / 2 = 0.08 / 2 + 0.015 / 2 = 0.0475 
+            axis= 1 1 1
+
+    -->
+<!-- 4.1link -->
+<link name="front_wheel">
+        <visual>
+            <geometry>
+                <sphere radius="0.0075" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="wheel_color">
+                <color rgba="0.8 0.3 0.1 0.5" />
+            </material>
+        </visual>
+    </link>
+    <link name="back_wheel">
+        <visual>
+            <geometry>
+                <sphere radius="0.0075" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="wheel_color">
+                <color rgba="0.8 0.3 0.1 0.5" />
+            </material>
+        </visual>
+    </link>
+<!-- 4.2joint -->
+<joint name="front2link" type="continuous">
+        <parent link="base_link" />
+        <child link="front_wheel"/>
+        <!-- 这里的偏移是父子级之间的位置关系，不是参考的大地，参考父级坐标，判断大小和正负 -->
+        <origin xyz="0.08 0 -0.0475" rpy="0 0 0"/>
+        <!-- 参考Axes,所以是绕y轴旋转 -->
+        <axis xyz="0 1 0" />
+    </joint>
+<joint name="back2link" type="continuous">
+        <parent link="base_link" />
+        <child link="back_wheel"/>
+        <!-- 这里的偏移是父子级之间的位置关系，不是参考的大地，参考父级坐标，判断大小和正负 -->
+        <origin xyz="-0.08 0 -0.0475" rpy="0 0 0"/>
+        <!-- 参考Axes,所以是绕y轴旋转 -->
+        <axis xyz="0 1 0" />
+    </joint>
+</robot>

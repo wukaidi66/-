@@ -1,0 +1,12 @@
+<launch> 
+    <!-- 不需要再将 Urdf 文件的内容加载到参数服务器 了，因为demo03_env.launch中已经启动了，这也说明要先启动demo03_env.launch，不然会报错-->
+    <!-- 添加点云坐标系到kinect连杆坐标系的TF变换 -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="static_transform_publisher" args="0 0 0 -1.57 0 -1.57 /support /support_depth" />
+    <!-- 启动 rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find urdf01_rviz)/config/show_mycar.rviz"/>
+    <!-- rviz中显示URDF时，必须发布不同部件之间的坐标关系，即下面两个ROS封装好的节点 -->
+    <!-- 关节状态发布节点 -->
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+    <!-- 机器人状态发布节点 -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+</launch>

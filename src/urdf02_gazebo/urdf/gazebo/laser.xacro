@@ -1,0 +1,48 @@
+<robot name="my_sensors" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <!-- 雷达 -->
+  <!-- 把雷达贴到laser这个link上 -->
+  <gazebo reference="laser">
+    <sensor type="ray" name="rplidar">
+      <!-- 雷达位姿，xyz和欧拉角 -->
+      <pose>0 0 0 0 0 0</pose>
+      <!-- true时显示雷达射线 -->
+      <visualize>true</visualize>
+      <!-- 雷达射线更新频率5.5次每秒 -->
+      <update_rate>5.5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <!-- 雷达旋转一周会发射360个射线，即360个采样线 -->
+            <samples>360</samples>
+            <!-- 分辨率，1就是每一个射线都测距，n就是每n个射线里面有一个用来测距。真实环境下每一个射线都会测距，这里是为了降低仿真的计算量 -->
+            <resolution>1</resolution>
+            <!-- 采样范围，单位是弧度 -->
+            <min_angle>-3</min_angle>
+            <max_angle>3</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <!-- 设置采样的有效范围，里机器人小于0.1米或大于30米采样都采样不到 -->
+          <min>0.10</min>
+          <max>30.0</max>
+          <!-- 设置采样精度，测得的距离精确到1厘米 -->
+          <resolution>0.01</resolution>
+        </range>
+        <!-- 设置高斯噪声，模仿现实中由于设备自身和环境等因素导致对于同一点每次测得的距离都不一样的情况 -->
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_rplidar" filename="libgazebo_ros_laser.so">
+        <!-- 设置雷达发布消息的话题 -->
+        <topicName>/scan</topicName>
+        <!-- 雷达坐标系，即雷达link的名字 -->
+        <frameName>laser</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

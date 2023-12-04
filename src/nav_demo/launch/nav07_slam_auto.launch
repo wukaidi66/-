@@ -1,0 +1,9 @@
+<!-- 集成slam和导航，实现机器人自主移动的地图构建 与nav06_test相比，可见salm节点可以取代map_server(提供地图)和amcl（定位）这两个节点-->
+<launch>
+    <!-- 启动SLAM节点 -->
+    <include file="$(find nav_demo)/launch/nav01_slam.launch" />
+    <!-- 运行move_base节点 -->
+    <include file="$(find nav_demo)/launch/nav05_path.launch" />
+    <!-- 运行rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find nav_demo)/config/nav_test.rviz" />
+</launch>
